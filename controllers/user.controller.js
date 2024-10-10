@@ -101,11 +101,13 @@ const login = asyncHandler(async (req, res, next) => {
 
   const options = {
     httpOnly: true,
-    secure: true
+    secure: true,
+    sameSite: 'None',
+    domain: process.env.FRONTEND_DOMAIN || "https://studynotion-front-end-nkv6.vercel.app"
   };
 
   return res
-    .cookie('token' , token , options)
+    .cookie('token', token, options)
     .status(200)
     .json(new ApiResponse(200, loggedInUser, true, "Login Successfully"));
 });
