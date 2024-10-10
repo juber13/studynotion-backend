@@ -24,8 +24,8 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://studynotion-front-end-nkv6.vercel.app/",
-    ], // replace with your frontend URL
+      "https://studynotion-front-end-nkv6.vercel.app",
+    ],
     credentials: true,
   })
 );
