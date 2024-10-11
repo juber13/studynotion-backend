@@ -22,10 +22,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://studynotion-front-end-nkv6.vercel.app",
-    ],
+    origin: process.env.FRONTEND_DOMAIN,
     credentials: true,
   })
 );

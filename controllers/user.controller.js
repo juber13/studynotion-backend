@@ -72,7 +72,6 @@ const register = asyncHandler(async (req, res, next) => {
   );
 });
 
-
 // login user method post url[http://localhost:5000/user/login]
 const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
@@ -103,7 +102,7 @@ const login = asyncHandler(async (req, res, next) => {
     httpOnly: true,
     secure: true,
     sameSite: 'None',
-    domain: process.env.FRONTEND_DOMAIN || "https://studynotion-front-end-nkv6.vercel.app"
+    domain : "https://studynotion-front-end-nkv6.vercel.app",
   };
 
   return res
