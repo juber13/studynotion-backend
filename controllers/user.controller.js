@@ -102,7 +102,7 @@ const login = asyncHandler(async (req, res, next) => {
     httpOnly: true,
     secure: true,
     sameSite: 'None',
-    domain : "https://studynotion-front-end-nkv6.vercel.app",
+    domain : process.env.FRONTEND_DOMAIN || "http://localhost:5173",  
   };
 
   return res

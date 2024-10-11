@@ -5,8 +5,6 @@ import { User } from '../models/user.model.js';
 const auth = async(req, _, next) => {
     try {
         const token = req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "") || req.body.token;
-        console.log("Token from cookies:", req.cookies?.token);
-        console.log("Token from Authorization header:", req.header("Authorization")?.replace("Bearer ", ""));
         console.log("Token from body:", req.body.token);
         console.log("Final token used:", token);
         
