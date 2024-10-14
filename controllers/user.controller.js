@@ -98,17 +98,9 @@ const login = asyncHandler(async (req, res, next) => {
   const token = await tokengenerator(user._id);
   const loggedInUser  = await User.findById(user._id).select("-password -refreshToken")
 
-  const options = {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'None',
-    domain : process.env.FRONTEND_DOMAIN || "http://localhost:5173",  
-  };
-
   return res
-    .cookie('token', token, options)
     .status(200)
-    .json(new ApiResponse(200, loggedInUser, true, "Login Successfully"));
+    .json(new ApiResponse(200, { ...loggedInUser, token }, true, "Login Successfully"));
 });
 
 

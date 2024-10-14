@@ -60,7 +60,6 @@ const getAllCourses = asyncHandler(async (req, res) => {
 }); 
 
 
-
 const getInstructorCourses = asyncHandler(async (req, res) => {
   const courses = await Course.find({ instructor: req.user._id });
   return res

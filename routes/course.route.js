@@ -8,6 +8,6 @@ import authenticate from "../middlewares/authenticate.js";
 courseRouter.post("/uploadCourse", authenticate, upload.fields([{ name: 'thumbnail', maxCount: 1 },{ name: 'video', maxCount: 1 }]), uploadCourse);
 courseRouter.get("/getCourse" , getAllCourses);
 courseRouter.get("/getInstructorCourse", authenticate, getInstructorCourses);
-courseRouter.patch("/makeCoursePublished/:courseId", authenticate, makeCoursePublished);    
+courseRouter.patch("/:courseId", authenticate, makeCoursePublished);    
 
 export default courseRouter;

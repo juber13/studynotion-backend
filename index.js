@@ -22,9 +22,9 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: "*",
-    credentials: true,
-  })
+    origin: "http://localhost:5173",  // This line allows requests from any origin (domain) to access the API
+    credentials: true,  
+    })
 );
 app.use(cookieParser());
 app.use(express.json());
@@ -47,15 +47,8 @@ app.use(express.urlencoded({extended : true}))
 // }))
 
 
-// import routers
-import userRouter from './routes/user.route.js'
-// import courseRouter from '../routes/course.route.js'
-import courseRouter from './routes/course.route.js'
-
-
-app.use('/api/user' , userRouter);
-app.use('/api/course' , courseRouter);
-
+import routes from './routes/index.js'
+app.use('/api' , routes);
 
 
 // error handling middleware
