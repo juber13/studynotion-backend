@@ -18,14 +18,12 @@ if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !pr
 }
 
 
-const uploadImage = async (localPath , isUpdating = false , id) => {
+const uploadImage = async (localPath) => {
   try {
     if (!localPath) return null + "local path not found";
 
     const response = await cloudinary.v2.uploader.upload(localPath, {
       resource_type: "auto",
-      public_id: isUpdating && id,
-      overwrite: isUpdating && true,
     });
 
     // File upload successfully completed
