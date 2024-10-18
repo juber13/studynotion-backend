@@ -45,9 +45,6 @@ const register = asyncHandler(async (req, res, next) => {
   }
 
 
-    if (!avatarLocalPath) {
-      return next(new ApiError(400, "Avatar image is required"));
-    } 
 
     const avatar = await uploadImage(avatarLocalPath);
     console.log("avatar response from cloudinary "+ avatar);
