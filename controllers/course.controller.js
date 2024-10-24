@@ -87,4 +87,20 @@ const makeCoursePublished = asyncHandler(async (req, res) => {
   .json(new ApiResponse(200, updatedCourse, "Course published successfully"));
 })
 
-export { uploadCourse, getAllCourses, getInstructorCourses , makeCoursePublished };
+
+// get sigle course
+
+const getCourseDetails = asyncHandler(async (req, res) => {
+  const courseId = req.params.id;
+  console.log(courseId)
+  const course = await Course.findById(courseId);
+  if (!course) {
+    throw new ApiError(404, "Course not found");
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, course, "Course fetched successfully"));
+});
+
+
+export { uploadCourse, getAllCourses, getInstructorCourses , makeCoursePublished , getCourseDetails };

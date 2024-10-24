@@ -15,7 +15,8 @@ import { tokengenerator } from "../utils/token.js";
 // register user method post url[http://localhost:5000/user/register]
 const register = asyncHandler(async (req, res, next) => {
   const { name, email, password, confirmPassword, role, lastName, phoneNumber } = req.body;
-  console.log(req.file)
+  console.log(req.files);
+  console.log(req.body)
   // const avatarLocalPath = req.file ? req.file : null;  
   const avatarLocalPath = req.file ? req.file.path : null; // Use req.file.path for the file path
   // console.log(avatarLocalPath)
@@ -72,11 +73,12 @@ const register = asyncHandler(async (req, res, next) => {
 // login user method post url[http://localhost:5000/user/login]
 const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
+  console.log(req.body)
 
   // Check if any of the input fields are empty
-  if ([email, password].some((field) => !field)) {
+  if ([email, password].some((field) => !field)) 
     return next(new ApiError(400, "All fields are required"));
-  }
+  
 
   // Find user without excluding password
   let user = await User.findOne({ email });
@@ -93,11 +95,20 @@ const login = asyncHandler(async (req, res, next) => {
 
   // const {accessToken , refreshToken} = await generateAccessAndRefreshToken(user._id);
   const token = await tokengenerator(user._id);
-  const loggedInUser  = await User.findById(user._id).select("-password -refreshToken")
+  const loggedInUser  = await User.findById(user._id).select("-password -refreshToken");
+
+  
+
+  const option =  {
+    httpOnly :true,
+    secure : false,
+    sameSite : "none",
+    // path: "/",
+  }
 
   return res
     .status(200)
-    .json(new ApiResponse(200, { ...loggedInUser, token }, true, "Login Successfully"));
+    .json(new ApiResponse(200, {...loggedInUser , token}, "Login Successfully"));
 });
 
 

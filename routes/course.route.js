@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { uploadCourse , getAllCourses , getInstructorCourses , makeCoursePublished } from "../controllers/course.controller.js";
+import { uploadCourse , getAllCourses , getInstructorCourses , makeCoursePublished , getCourseDetails } from "../controllers/course.controller.js";
 const courseRouter = Router();
 
 import { upload } from '../middlewares/multer.js'
@@ -9,5 +9,6 @@ courseRouter.post("/uploadCourse", authenticate, upload.fields([{ name: 'thumbna
 courseRouter.get("/getCourse" , getAllCourses);
 courseRouter.get("/getInstructorCourse", authenticate, getInstructorCourses);
 courseRouter.patch("/:courseId", authenticate, makeCoursePublished);    
+courseRouter.get("/:id", authenticate, getCourseDetails);    
 
 export default courseRouter;
