@@ -27,18 +27,25 @@ const generateAccessAndRefreshToken = async(userId) => {
 const register = asyncHandler(async (req, res, next) => {
   const { name, email, password, confirmPassword, role, lastName, phoneNumber } = req.body;
   const avatarLocalPath = req.file ? req.file.path : null; // Use req.file.path for the file path
-  let avatar;
-    try{
-     avatar = await uploadImage(avatarLocalPath);
-     console.log("avatar response from cloudinary "+ avatar);
-    }catch(err){
-      console.log(err)
-    }
-
-    if (!avatar) {
+   
+   if(!name || !email || !password || !confirmPassword || !role || !lastName || !phoneNumber) { 
+      return next(new ApiError(400, "All fields are required"));  
+   }
+    if(!avatarLocalPath) {
       return next(new ApiError(400, "Failed to upload avatar image"));
     }
 
+   if(password !== confirmPassword) {
+     return next(new ApiError(400, "Password and confirm password must be same"));
+   }
+   
+   const isUserExist = await User.findOne({email}); 
+   
+   if(isUserExist) {
+     return next(new ApiError(400, "User already exist"));
+   }
+
+  let avatar = await uploadImage(avatarLocalPath);
   const newUser = await User.create({
     name,
     email,
