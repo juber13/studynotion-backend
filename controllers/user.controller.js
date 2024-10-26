@@ -12,6 +12,7 @@ const generateAccessAndRefreshToken = async(userId) => {
     if(!user){
      throw new ApiError(401, "Invalid user Id");
     }
+
     const accessToken = user.generateAccessToken(userId); 
     const refreshToken =  user.generateRefreshToken(userId); 
     user.refreshToken = refreshToken;
@@ -66,10 +67,12 @@ const register = asyncHandler(async (req, res, next) => {
 // login user method post url[http://localhost:5000/user/login]
 const login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
+
   if ([email, password].some((field) => !field)) 
     return next(new ApiError(400, "All fields are required"));
 
   let user = await User.findOne({ email });
+  
   if (!user) {
     return next(new ApiError(401, "Invalid Password or Email"));
   }
