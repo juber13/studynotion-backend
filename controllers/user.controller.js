@@ -2,9 +2,11 @@ import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-
+import bcrypt from "bcryptjs";
 
 import {uploadImage , deleteImageOnCloudinary}  from "../utils/cloudinary.js";
+import { sendMail , generateOtp } from "../utils/emailService.js";
+import { configDotenv } from "dotenv";
 
 const generateAccessAndRefreshToken = async(userId) => {
    try {
@@ -72,7 +74,7 @@ const login = asyncHandler(async (req, res, next) => {
     return next(new ApiError(400, "All fields are required"));
 
   let user = await User.findOne({ email });
-  
+
   if (!user) {
     return next(new ApiError(401, "Invalid Password or Email"));
   }
@@ -136,6 +138,77 @@ const editUserInfo  = asyncHandler(async(req, res) => {
 })
 
 
+const forgetPassword = asyncHandler(async (req, res , next) => {
+  const { _id } = req.user;
+  // console.log(_id);
+
+  // const otpExpiry = new Date(Date.now() + 5 * 60 * 1000)
+  const otp = generateOtp(); // Generate OTP
+  console.log(otp)
+
+  let user = await User.findById(_id);
+
+  if (!user) {
+    return next(new ApiError(404, "User not found"));
+  }
+
+  user = await User.findByIdAndUpdate(user._id , 
+     {  $set  : { otp :  otp} },
+     {new : true}
+  )
+
+  await sendMail(user.email , otp);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, null, "Password reset link sent to your email"));
+});
 
 
-export  {register , login , logoutUser , editUserInfo}
+const VerifyOtp = asyncHandler(async (req, res , next) => {
+  const { otp } = req.body;
+  const { _id } = req.user;
+  let user = await User.findById(_id);
+  if (!user) {
+    return next(new ApiError(404, "User not found"));
+  } 
+
+  if(user.otp !== otp) {
+    return next(new ApiError(400, "Invalid OTP"));
+  }
+
+  if(user.otp === otp) {
+    user.otp = undefined;
+    await user.save();
+    return res    .status(200)
+    .json(new ApiResponse(200, null, "OTP verified successfully"));
+  } 
+
+  // delete user.otp;
+})
+
+
+const updatePassword = asyncHandler(async(req , res) => {
+  
+  const {password , confirmPassword} = req.body;
+  
+  const { _id } = req.user; 
+  
+  let user = await User.findById(_id);
+  
+  if (!user) {
+    return next(new ApiError(404, "User not found"));
+  }
+  
+  if(password !== confirmPassword){
+    return next(new ApiError(400, "Password and confirm password must be same"));
+  }
+  user.password = password;
+  // console.log(bcrypt.decoded(user.password));
+  user.password = bcrypt.hashSync(password , 10);
+  console.log(user.password);
+  await user.save({validateBeforeSave : true});  
+  return res.status(200).json(new ApiResponse(200, null, "Password updated successfully")); 
+})
+
+
+export  {register , login , logoutUser , editUserInfo , forgetPassword , VerifyOtp , updatePassword}

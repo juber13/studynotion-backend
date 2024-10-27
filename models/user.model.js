@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+  {
     name: {
       type: String,
       required: [true, "Name is required"],
@@ -20,32 +21,31 @@ const userSchema = new mongoose.Schema({
       required: [true, "Password is required"],
     },
 
-    phoneNumber : {
-      type:String,
-      required : [true ,  "Phone Number is required"]
+    phoneNumber: {
+      type: String,
+      required: [true, "Phone Number is required"],
     },
 
-    role : {
-      type : String,
-      required : [true , "role is required"]
+    role: {
+      type: String,
+      required: [true, "role is required"],
     },
 
-
-    refreshToken : {
-      type : String,
+    refreshToken: {
+      type: String,
     },
 
-    imageUrl : {
-      type : String,
+    imageUrl: {
+      type: String,
     },
 
-    imageId : {
-      type: String
+    imageId: {
+      type: String,
     },
-    
-    isActive : {
-        type : Boolean,
-        default :true
+
+    isActive: {
+      type: Boolean,
+      default: true,
     },
 
     courses: {
@@ -53,10 +53,14 @@ const userSchema = new mongoose.Schema({
       ref: "Course",
     },
 
-    courseProgress : {
-        type : String,
-        ref : "Course"
-    }
+    otp: {
+      type: String,
+    },
+
+    courseProgress: {
+      type: String,
+      ref: "Course",
+    },
   },
   { timestamps: true }
 );
