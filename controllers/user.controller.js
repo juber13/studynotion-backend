@@ -36,6 +36,7 @@ const register = asyncHandler(async (req, res, next) => {
    }
     if(!avatarLocalPath) {
       return next(new ApiError(400, "Failed to upload avatar image"));
+      // return.status()
     }
 
    if(password !== confirmPassword) {
@@ -102,6 +103,34 @@ const login = asyncHandler(async (req, res, next) => {
 });
 
 
+const updateAvatar = asyncHandler(async(req , res) => {
+  // const {imageUrl} = req.file?.path;
+   const avatarLocalPath = req.file ? req.file.path : null; // Use req.file.path for the file path
+  
+  if(!avatarLocalPath) {
+    return next(new ApiError(400, "Avatar is required "));
+  }
+
+  const avatarUrl = await uploadImage(avatarLocalPath); 
+  
+   if(!avatarUrl) {
+    return next(new ApiError(400, "Failed to upload avatar image"));
+  } 
+
+  const user  = await User.findByIdAndUpdate(req.user?._id , {
+     $set : {
+      imageUrl : avatarUrl.url, 
+     },
+    },
+    { new: true, }
+  )   
+  
+  return res.status((200).json(
+    new ApiResponse(200, user.imageUrl, "User avatar updated successfully")
+  ));  
+})
+
+
 const logoutUser = asyncHandler(async (req, res) => {
   return res.status(200).clearCookie("accessToken").json(
     new ApiResponse(200 , null , "User logout !")
@@ -112,22 +141,19 @@ const logoutUser = asyncHandler(async (req, res) => {
 const editUserInfo  = asyncHandler(async(req, res) => {
   const { data } = req.body;
    const { name, phoneNumber, lastName } = data;
-   const avatarLocalPath = req.file ? req.file.path : null; // Use req.file.path for the file path
-   const { imageId , _id } = await User.findOne({ _id: req.user._id }); 
   //  await deleteImageOnCloudinary(imageId); 
-   const avatar = await uploadImage(avatarLocalPath , true , imageId);
+   const avatar = await uploadImage(avatarLocalPath);
+   console.log(avatar);
 
-  const user = await User.findByIdAndUpdate(_id,
+  const user = await User.findByIdAndUpdate(req.user._id,
     {
       $set: {
         name,
         phoneNumber,
         lastName,
-        imageUrl: avatar.url,
-        imageId : avatar.public_id
       },
     },
-    { new: true, runValidators: true }
+    { new: true}
   ).select("-password -email");
 
   console.log(user);
@@ -140,11 +166,9 @@ const editUserInfo  = asyncHandler(async(req, res) => {
 
 const forgetPassword = asyncHandler(async (req, res , next) => {
   const { _id } = req.user;
-  // console.log(_id);
+  const {email}  = req.body;
 
-  // const otpExpiry = new Date(Date.now() + 5 * 60 * 1000)
   const otp = generateOtp(); // Generate OTP
-  console.log(otp)
 
   let user = await User.findById(_id);
 
@@ -157,10 +181,11 @@ const forgetPassword = asyncHandler(async (req, res , next) => {
      {new : true}
   )
 
-  await sendMail(user.email , otp);
+  await sendMail(email, otp);
   return res
     .status(200)
-    .json(new ApiResponse(200, null, "Password reset link sent to your email"));
+    .json(new ApiResponse(200, null, "Password reset link sent to your" + email));
+
 });
 
 
@@ -211,4 +236,4 @@ const updatePassword = asyncHandler(async(req , res) => {
 })
 
 
-export  {register , login , logoutUser , editUserInfo , forgetPassword , VerifyOtp , updatePassword}
+export  {register , login , logoutUser , editUserInfo , forgetPassword , VerifyOtp , updatePassword , updateAvatar}

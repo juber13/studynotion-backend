@@ -22,7 +22,7 @@ export const sendMail = async (mail, otp) => {
       from: process.env.GMAIL_USER,
       to: mail,
       subject: "Your opt for password reset is",
-      text: `Your One time OTP is ${otp}`,
+      html: `<h1>Your One time OTP is ${otp}</h1>`,
     };
 
     try {

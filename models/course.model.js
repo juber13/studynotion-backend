@@ -12,6 +12,7 @@ const courseSchema = new mongoose.Schema(
       type: String,
       required: [true, "Description is required"],
       maxLength: 100,
+      minLength : 30
     },
 
     coursePrice: {

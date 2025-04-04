@@ -5,14 +5,12 @@ import { User } from '../models/user.model.js';
 const auth = async(req, _, next) => {
     try {
         const token = req.header("Authorization")?.replace("Bearer ", "");
-        console.log("Final token used:", token);
         
         if (!token) {
             throw new ApiError(401, "You are not authenticated");
         }
 
         const decodedToken = jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET);
-        console.log(decodedToken)
         const user = await User.findById(decodedToken.id);
         
         if (!user) {
