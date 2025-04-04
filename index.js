@@ -22,7 +22,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: "http://localhost:5173/", // This line allows requests from any origin (domain) to access the API
+    origin: "*", // This line allows requests from any origin (domain) to access the API
     credentials: true,
   })
 );
